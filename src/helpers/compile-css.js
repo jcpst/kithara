@@ -33,6 +33,8 @@ const Css = {
       minify: true,
       output: styleFile
     })
+
+    console.log('>>> css files compiled'.green)
   }
 }
 

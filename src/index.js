@@ -3,9 +3,11 @@
 
 const fs = require('fs-extra')
 const path = require('path')
+
 const argv = require('minimist')(process.argv.slice(2))
 require('./helpers/colors')
 
+const help = require('./help')
 const styles = require('./helpers/compile-css')
 const PathAttrs = require('./helpers/path-attrs')
 const { markdownFileToHtml, pugFileToHtml } = require('./helpers/compile')
@@ -21,11 +23,6 @@ const {
 /* styles */
 styles.require('purecss/build/pure.css')
 styles.require('purecss/build/grids-responsive-min.css')
-
-console.log('dirname'.green, dirname)
-console.log('projectRoot'.green, projectRoot)
-console.log('source'.green, source)
-console.log('destination'.green, destination)
 
 /**
  * For dealing with files that will be transformed into HTML.
@@ -59,8 +56,10 @@ function convertToHtml(file, dest) {
  * @param dest {string} - Path to the destination directory.
  */
 function convertToStaticResource(file, dest) {
-  if (file.isHidden) return
-  console.log('path'.cyan, file.fullPath)
+  if (file.isHidden) {
+    return
+  }
+
   if (file.toHtml) {
     convertToHtml(file, dest)
   } else if (file.isCss) {
@@ -68,6 +67,8 @@ function convertToStaticResource(file, dest) {
   } else {
     fs.copySync(file.fullPath, path.join(dest, file.base))
   }
+
+  console.log('read'.cyan, file.fullPath)
 }
 
 /**
@@ -93,23 +94,18 @@ function compileFiles(src, dest) {
       convertToStaticResource(file, dest)
     }
   }
+
+  console.log('>>> html files compiled'.green)
 }
 
-//=============================================================================
-// Copy Files
-//=============================================================================
-fs.copy(path.join(projectRoot, 'CNAME'), path.join(destination, 'CNAME'))
-  .then(() => console.log('>>> copied CNAME'.green))
-  .catch(err => console.log(`>>> CNAME copy failed: ${err.code}`.red))
+// ============================================================================
+// Entry point
+// ============================================================================
+if (argv.help || argv.h || !argv._.length) {
+  console.log(help.main)
+}
 
-//=============================================================================
-// HTML Build
-//=============================================================================
-compileFiles(source, destination)
-console.log('>>> html files compiled'.green)
-
-//=============================================================================
-// CSS Build
-//=============================================================================
-styles.build(styleFile)
-console.log('>>> css purified'.green)
+if (argv._.includes('build')) {
+  compileFiles(source, destination)
+  styles.build(styleFile)
+}
