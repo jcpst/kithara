@@ -52,12 +52,10 @@ function mdLayout(fullPath) {
  * @returns {string}
  */
 function pugFileToHtml(file) {
-  return pug.renderFile(file.fullPath, {
+  return pug.compileFile(file.fullPath, {
     filename: file.name,
-    filters: {
-      marked
-    }
-  })
+    filters: { marked }
+  })(file.vars)
 }
 
 /**
@@ -65,15 +63,12 @@ function pugFileToHtml(file) {
  * @param file {PathAttrs}
  * @returns {string}
  */
-function markdownFileToHtml(file, locals = {}) {
-  return pug.render(mdLayout(file.fullPath), {
+function markdownFileToHtml(file) {
+  return pug.compile(mdLayout(file.fullPath), {
     basedir: source,
     filename: file.name + '.md',
-    filters: {
-      marked
-    },
-    ...locals
-  })
+    filters: { marked }
+  })(file.vars)
 }
 
 /**
@@ -99,7 +94,7 @@ function convertToHtml(file, dest) {
 }
 
 /**
- * This function is reponsible for calling compilers and writing the results to
+ * This function is responsible for calling compilers and writing the results to
  * disc. It skips hidden files, which start with an underscore (_). If the file
  * is not a file we care about compiling, will copy it with no transformation.
  *
@@ -115,7 +110,7 @@ function convertToStaticResource(file, dest) {
   if (file.toHtml) {
     convertToHtml(file, dest)
   } else if (file.isCss) {
-    styles.add(file.fullPath)
+    // styles.add(file.fullPath)
   } else {
     fs.copySync(file.fullPath, path.join(dest, file.base))
   }
@@ -134,11 +129,15 @@ function convertToStaticResource(file, dest) {
  */
 function compileFiles(src, dest) {
   const srcDirFiles = fs.readdirSync(src)
+  const dataFile = path.join(src, '_data.js')
+  const data = fs.pathExistsSync(dataFile)
+    ? require(dataFile)
+    : {}
   let i = srcDirFiles.length
 
   while (i--) {
     const fullPath = path.join(src, srcDirFiles[i])
-    const file = Object.create(PathAttrs).init(fullPath)
+    const file = Object.create(PathAttrs).init(fullPath, data)
 
     if (file.isDir) {
       compileFiles(fullPath, path.join(dest, file.name))
