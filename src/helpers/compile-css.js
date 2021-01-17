@@ -31,11 +31,11 @@ const Css = {
   build(styleFile) {
     purify(['./build/**/*.html'], this.cssString, {
       minify: true,
-      output: styleFile
+      output: styleFile,
     })
 
     console.log('>>> css files compiled'.green)
-  }
+  },
 }
 
 module.exports = Object.create(Css).init()

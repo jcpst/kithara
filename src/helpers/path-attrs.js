@@ -41,7 +41,7 @@ const PathAttrs = {
     this.toHtml = this.ext.match(/\.(jade|pug|md|markdown|html)/) !== null
     this.vars = vars
     return this
-  }
+  },
 }
 
 module.exports = PathAttrs

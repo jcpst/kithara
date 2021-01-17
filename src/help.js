@@ -10,5 +10,5 @@ const main = outdent`
 `
 
 module.exports = {
-  main
+  main,
 }

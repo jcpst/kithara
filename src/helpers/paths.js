@@ -15,5 +15,5 @@ module.exports = {
   globalConfig,
   source,
   destination,
-  styleFile
+  styleFile,
 }

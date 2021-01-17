@@ -15,7 +15,7 @@ const {
   globalConfig,
   source,
   destination,
-  styleFile
+  styleFile,
 } = require('./paths')
 
 /**
@@ -31,7 +31,7 @@ function fileLines(fileName) {
  *
  */
 function indent(spaces) {
-  return line => line.padStart(line.length + spaces)
+  return (line) => line.padStart(line.length + spaces)
 }
 
 /**
@@ -42,7 +42,7 @@ function mdLayout(fullPath) {
     'extends /_layout.pug',
     'block content',
     '  :marked(gfm=true mangle=true)',
-    ...fileLines(fullPath).map(indent(4))
+    ...fileLines(fullPath).map(indent(4)),
   ].join(os.EOL)
 }
 
@@ -54,7 +54,7 @@ function mdLayout(fullPath) {
 function pugFileToHtml(file) {
   return pug.compileFile(file.fullPath, {
     filename: file.name,
-    filters: { marked }
+    filters: { marked },
   })(file.vars)
 }
 
@@ -67,7 +67,7 @@ function markdownFileToHtml(file) {
   return pug.compile(mdLayout(file.fullPath), {
     basedir: source,
     filename: file.name + '.md',
-    filters: { marked }
+    filters: { marked },
   })(file.vars)
 }
 
@@ -130,9 +130,7 @@ function convertToStaticResource(file, dest) {
 function compileFiles(src, dest) {
   const srcDirFiles = fs.readdirSync(src)
   const dataFile = path.join(src, '_data.js')
-  const data = fs.pathExistsSync(dataFile)
-    ? require(dataFile)
-    : {}
+  const data = fs.pathExistsSync(dataFile) ? require(dataFile) : {}
   let i = srcDirFiles.length
 
   while (i--) {
