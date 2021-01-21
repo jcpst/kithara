@@ -1,6 +1,6 @@
 {
   "name": "kithara",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "description": "",
   "keywords": [],
   "author": "Joseph Post",
@@ -23,7 +23,7 @@
     "minimist": "^1.2.5",
     "outdent": "^0.8.0",
     "pug": "^3.0.0",
-    "purecss": "^2.0.3",
+    "purecss": "^1.0.0",
     "purify-css": "^1.2.5",
     "w3-css": "^4.1.0"
   },

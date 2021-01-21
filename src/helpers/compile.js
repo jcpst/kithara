@@ -8,6 +8,7 @@ const marked = require('jstransformer-marked').render
 
 require('./colors')
 
+const styles = require('./compile-css')
 const PathAttrs = require('./path-attrs')
 const {
   dirname,
@@ -110,7 +111,7 @@ function convertToStaticResource(file, dest) {
   if (file.toHtml) {
     convertToHtml(file, dest)
   } else if (file.isCss) {
-    // styles.add(file.fullPath)
+    styles.add(file.fullPath)
   } else {
     fs.copySync(file.fullPath, path.join(dest, file.base))
   }
